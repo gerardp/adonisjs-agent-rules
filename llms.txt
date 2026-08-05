@@ -1,0 +1,63 @@
+# AdonisJS Agent Guidelines
+
+> Curated best-practice rules for writing AdonisJS **v7** applications with AI coding agents. AdonisJS already publishes excellent *reference* documentation for LLMs at https://docs.adonisjs.com/llms.txt — this pack is the missing *opinionated* layer: what to do by default, what to avoid, and which outdated APIs break generated code.
+
+Read `skills/adonisjs-best-practices/SKILL.md` first — it is the index and explains how to apply the rules. Read `rules/version-traps.md` before writing any AdonisJS code, because model training data skews heavily toward v5 and v6 APIs that no longer exist in v7.
+
+## Start here
+
+- [SKILL.md](skills/adonisjs-best-practices/SKILL.md): Index, application procedure, and decision rules. The entry point.
+- [version-traps.md](skills/adonisjs-best-practices/rules/version-traps.md): v5/v6 APIs never to write and their v7 equivalents — `vine.create()`, `urlFor()`, barrel-file controller imports, generated Lucid schema classes. Read this first.
+- [architecture.md](skills/adonisjs-best-practices/rules/architecture.md): Which layer owns which logic, when to extract a service, when not to abstract.
+
+## HTTP layer
+
+- [routing.md](skills/adonisjs-best-practices/rules/routing.md): Route definitions, resource routes, param matchers and casting, named routes and type-safe URL generation.
+- [controllers.md](skills/adonisjs-best-practices/rules/controllers.md): Thin actions, RESTful naming, ordering of authorize/validate/write, response semantics.
+- [middleware.md](skills/adonisjs-best-practices/rules/middleware.md): The three stacks and how to choose, named middleware with typed options, the request pipeline.
+- [validation.md](skills/adonisjs-best-practices/rules/validation.md): VineJS schemas, `request.validateUsing()`, validating params/headers/cookies, metadata, custom messages.
+- [error-handling.md](skills/adonisjs-best-practices/rules/error-handling.md): The global exception handler, `handle` vs `report`, custom exceptions, what never to leak.
+
+## Data layer
+
+- [lucid-models.md](skills/adonisjs-best-practices/rules/lucid-models.md): Generated schema classes, relationships, hooks, query scopes, serialization, factories.
+- [db-performance.md](skills/adonisjs-best-practices/rules/db-performance.md): Preloading and N+1, pagination, aggregates, indexing, bulk operations.
+- [migrations.md](skills/adonisjs-best-practices/rules/migrations.md): Reversible migrations, why models must never be imported, backfills, foreign keys, indexes.
+- [transactions.md](skills/adonisjs-best-practices/rules/transactions.md): Managed transactions, threading `trx` through every query, isolation levels, keeping slow work out.
+
+## Auth and security
+
+- [authentication.md](skills/adonisjs-best-practices/rules/authentication.md): Guard selection, `verifyCredentials` and timing attacks, sessions, access tokens.
+- [authorization.md](skills/adonisjs-best-practices/rules/authorization.md): Bouncer abilities and policies, ownership checks, guests, template and Inertia integration.
+- [security.md](skills/adonisjs-best-practices/rules/security.md): Mass assignment, IDOR, SQL injection, uploads, CSRF, rate limiting, secrets and logging.
+
+## Application services
+
+- [services-di.md](skills/adonisjs-best-practices/rules/services-di.md): The IoC container, `@inject()`, the `import type` pitfall, bindings, providers, test swaps.
+- [config.md](skills/adonisjs-best-practices/rules/config.md): Config vs env vs adonisrc, env validation, `APP_KEY`, per-environment files.
+- [transformers.md](skills/adonisjs-best-practices/rules/transformers.md): Response shaping, relationships and depth, variants, pagination, generated frontend types.
+- [queues-jobs.md](skills/adonisjs-best-practices/rules/queues-jobs.md): Job anatomy, dispatch after commit, idempotency, retries, workers, fakes. (Experimental package.)
+
+## Quality
+
+- [testing.md](skills/adonisjs-best-practices/rules/testing.md): Japa suites, database state reset, factories, API client, fakes, time control.
+- [style.md](skills/adonisjs-best-practices/rules/style.md): snake_case files and PascalCase classes, subpath imports, ESM rules, `declare`, generated files.
+
+## Official AdonisJS documentation
+
+Authoritative reference. Every page is available as raw Markdown by appending `.md` to its URL.
+
+A verbatim snapshot is vendored locally for offline use and whole-corpus grepping — see [official/README.md](official/README.md) for the caveat that it goes stale:
+
+- [official/llms.txt](official/llms.txt): Local copy of the upstream table of contents.
+- [official/llms-full.txt](official/llms-full.txt): Local copy of the entire documentation (~1.5 MB).
+
+Prefer the live URLs when the network is available:
+
+- [AdonisJS docs index](https://docs.adonisjs.com/llms.txt): Table of contents for the official documentation.
+- [AdonisJS docs, complete](https://docs.adonisjs.com/llms-full.txt): The entire documentation in a single file.
+- [v6 to v7 upgrade guide](https://docs.adonisjs.com/v6-to-v7.md): Authoritative list of breaking changes.
+- [Lucid ORM](https://lucid.adonisjs.com): Query builder, relationships, transactions, schema classes. Deeper than the core guide.
+- [VineJS](https://vinejs.dev): Validation schema types and rules.
+- [Japa](https://japa.dev): Test runner, plugins, assertions.
+- [Docs source repository](https://github.com/adonisjs/v7-docs): Where the official docs are authored.
