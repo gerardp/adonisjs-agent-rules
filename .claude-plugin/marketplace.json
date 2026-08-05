@@ -1,0 +1,35 @@
+{
+  "name": "adonisjs-agent-rules",
+  "owner": {
+    "name": "Gerard PG",
+    "url": "https://github.com/gerardp"
+  },
+  "metadata": {
+    "description": "Curated best-practice rules for building AdonisJS v7 applications with AI coding agents.",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "adonisjs-best-practices",
+      "source": "./",
+      "description": "Opinionated best-practice rules for writing AdonisJS v7 applications with AI coding agents: defaults, anti-patterns, and the v5/v6 API traps that break generated code.",
+      "version": "1.0.0",
+      "author": {
+        "name": "Gerard PG",
+        "url": "https://github.com/gerardp"
+      },
+      "homepage": "https://github.com/gerardp/adonisjs-agent-rules",
+      "license": "MIT",
+      "category": "development",
+      "keywords": [
+        "adonisjs",
+        "adonisjs-v7",
+        "typescript",
+        "lucid",
+        "vinejs",
+        "japa",
+        "best-practices"
+      ]
+    }
+  ]
+}

@@ -39,6 +39,7 @@ Cross-cutting changes often need more than one rule file.
 | Concern | Read |
 | --- | --- |
 | **Any AdonisJS work — version-specific API traps** | [`rules/version-traps.md`](rules/version-traps.md) |
+| Layer boundaries, when to extract a service, when not to abstract | [`rules/architecture.md`](rules/architecture.md) |
 | Routes, params, matchers, resource routes, URL generation | [`rules/routing.md`](rules/routing.md) |
 | Controllers, actions, HttpContext, response shaping | [`rules/controllers.md`](rules/controllers.md) |
 | Middleware stacks, named middleware, request pipeline | [`rules/middleware.md`](rules/middleware.md) |
@@ -75,13 +76,15 @@ These rules capture judgment and defaults; they are not an API reference. When y
 - Indexed table of contents: `https://docs.adonisjs.com/llms.txt`
 - Entire documentation in one file: `https://docs.adonisjs.com/llms-full.txt`
 
-A snapshot of the last two is vendored alongside this pack, which is faster than a network fetch when you want to search the whole corpus at once:
+A snapshot of the last two is vendored inside this skill, which is faster than a network fetch when you want to search the whole corpus at once:
+
+Shell commands run from the project root, not from this directory, so grep the installed path:
 
 ```bash
-grep -n "withAuthFinder" docs/official/llms-full.txt
+grep -n "withAuthFinder" .claude/skills/adonisjs-best-practices/references/llms-full.txt
 ```
 
-It is a point-in-time copy, so prefer the live URLs for anything version-sensitive. See `docs/official/README.md`.
+It is a point-in-time copy, so prefer the live URLs for anything version-sensitive. See [`references/README.md`](references/README.md).
 - Lucid ORM (separate site, deeper than the core guide): `https://lucid.adonisjs.com`
 - VineJS validation rules: `https://vinejs.dev`
 - Japa test runner: `https://japa.dev`

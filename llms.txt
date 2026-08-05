@@ -47,10 +47,10 @@ Read `skills/adonisjs-best-practices/SKILL.md` first — it is the index and exp
 
 Authoritative reference. Every page is available as raw Markdown by appending `.md` to its URL.
 
-A verbatim snapshot is vendored locally for offline use and whole-corpus grepping — see [official/README.md](official/README.md) for the caveat that it goes stale:
+A verbatim snapshot is vendored inside the skill for offline use and whole-corpus grepping — see [references/README.md](skills/adonisjs-best-practices/references/README.md) for the caveat that it goes stale:
 
-- [official/llms.txt](official/llms.txt): Local copy of the upstream table of contents.
-- [official/llms-full.txt](official/llms-full.txt): Local copy of the entire documentation (~1.5 MB).
+- [references/llms.txt](skills/adonisjs-best-practices/references/llms.txt): Local copy of the upstream table of contents.
+- [references/llms-full.txt](skills/adonisjs-best-practices/references/llms-full.txt): Local copy of the entire documentation (~1.5 MB).
 
 Prefer the live URLs when the network is available:
 

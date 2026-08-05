@@ -21,20 +21,26 @@ So the gap is not reference material — an agent can already look up any API. T
 ## Contents
 
 ```
-docs/
-├── README.md          ← you are here
-├── llms.txt           ← llms.txt-format index of this pack + official docs
-├── AGENTS.md          ← drop-in foundation rules for a project root
-├── official/          ← vendored snapshot of the official AdonisJS docs
-│   ├── llms.txt       ·   146 lines — upstream table of contents
-│   └── llms-full.txt  ·   47,876 lines (~1.5 MB) — the whole documentation
+├── README.md              ← you are here
+├── CONTRIBUTING.md        ← what belongs in a rule, and how to verify one
+├── CHANGELOG.md
+├── llms.txt               ← llms.txt-format index of this pack + official docs
+├── .claude-plugin/        ← manifests that make this repo installable via /plugin
+├── scripts/lint.mjs       ← validates manifests, frontmatter, and links
+├── templates/
+│   └── AGENTS.md          ← drop-in foundation rules for a project root
 └── skills/
     └── adonisjs-best-practices/
-        ├── SKILL.md   ← index, application procedure, decision rules
-        └── rules/     ← 18 topic files
+        ├── SKILL.md       ← index, application procedure, decision rules
+        ├── rules/         ← 20 topic files
+        └── references/    ← vendored snapshot of the official AdonisJS docs
+            ├── llms.txt      ·   146 lines — upstream table of contents
+            └── llms-full.txt ·   47,876 lines (~1.5 MB) — the whole documentation
 ```
 
-`official/` is verbatim upstream material, snapshotted 2026-08-05 — reference (*what the APIs are*). Everything else is this project's opinionated layer (*which option to pick*). See [`official/README.md`](official/README.md) for refresh instructions and the staleness caveat.
+Everything the skill needs at runtime lives inside `skills/adonisjs-best-practices/`, so installing is a single directory copy.
+
+`references/` is verbatim upstream material, snapshotted 2026-08-05 — reference (*what the APIs are*). Everything else is this project's opinionated layer (*which option to pick*). See [`references/README.md`](skills/adonisjs-best-practices/references/README.md) for refresh instructions and the staleness caveat.
 
 | Rule file | Covers |
 | --- | --- |
@@ -61,20 +67,31 @@ docs/
 
 ## Installation
 
-Copy into your AdonisJS project:
+### As a Claude Code plugin (recommended)
+
+```
+/plugin marketplace add gerardp/adonisjs-agent-rules
+/plugin install adonisjs-best-practices@adonisjs-agent-rules
+```
+
+This installs the skill and keeps it updatable. It does **not** install `AGENTS.md` — that file belongs in your project root, so copy it manually (see below).
+
+### Manual copy
 
 ```bash
-# Foundation rules — the file your agent reads every session
-cp docs/AGENTS.md /path/to/your-app/AGENTS.md      # or CLAUDE.md
+git clone https://github.com/gerardp/adonisjs-agent-rules.git
 
 # The skill
 mkdir -p /path/to/your-app/.claude/skills
-cp -r docs/skills/adonisjs-best-practices /path/to/your-app/.claude/skills/
+cp -r adonisjs-agent-rules/skills/adonisjs-best-practices /path/to/your-app/.claude/skills/
+
+# Foundation rules — the file your agent reads every session
+cp adonisjs-agent-rules/templates/AGENTS.md /path/to/your-app/AGENTS.md   # or CLAUDE.md
 ```
 
 For agents that read `.agents/skills/` (Codex, Copilot), copy there instead — or symlink so both resolve to one source.
 
-Then fill in the **Project-Specific Notes** section at the bottom of `AGENTS.md`. That is where your app's actual domain vocabulary, deviations, and constraints go; the generic rules can't know them.
+Either way, fill in the **Project-Specific Notes** section at the bottom of `AGENTS.md`. That is where your app's actual domain vocabulary, deviations, and constraints go; the generic rules can't know them.
 
 ## How an agent should use this
 
@@ -110,6 +127,12 @@ node ace repl                 # application-aware REPL
 ```
 
 `AGENTS.md` points at these so the agent inspects rather than infers. An MCP server exposing schema introspection and doc search as first-class tools would be the natural next step, and would close a real gap.
+
+## Contributing
+
+Corrections and new rules are welcome — see [CONTRIBUTING.md](CONTRIBUTING.md). The short version: a rule should say *which option to pick and why*, not restate the API, and every code sample must be verified against the official v7 docs. Run `node scripts/lint.mjs` before opening a pull request.
+
+Version history is in [CHANGELOG.md](CHANGELOG.md).
 
 ## License
 

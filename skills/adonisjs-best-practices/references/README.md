@@ -18,23 +18,24 @@ These files are a point-in-time copy and **will go stale**. Prefer the live URLs
 Use the vendored files when working offline, when you want a stable reference that doesn't shift mid-task, or when you need to grep the whole corpus at once:
 
 ```bash
-grep -n "withAuthFinder" docs/official/llms-full.txt
+grep -n "withAuthFinder" .claude/skills/adonisjs-best-practices/references/llms-full.txt
 ```
 
-Refresh them with:
+Refresh them from the repository root with:
 
 ```bash
-curl -sSL https://docs.adonisjs.com/llms.txt      -o docs/official/llms.txt
-curl -sSL https://docs.adonisjs.com/llms-full.txt -o docs/official/llms-full.txt
+cd skills/adonisjs-best-practices/references
+curl -sSL https://docs.adonisjs.com/llms.txt      -o llms.txt
+curl -sSL https://docs.adonisjs.com/llms-full.txt -o llms-full.txt
 ```
 
 Update the snapshot date above when you do, and re-check the rules pack against anything that changed.
 
-## Relationship to the rest of `docs/`
+## Relationship to the rest of the skill
 
-These are **reference** material: what the APIs are. The rules in [`../skills/adonisjs-best-practices/`](../skills/adonisjs-best-practices/) are the **opinionated** layer: which option to pick by default and what to avoid. They cite these docs but do not duplicate them.
+These are **reference** material: what the APIs are. The rules in [`../rules/`](../rules/) are the **opinionated** layer: which option to pick by default and what to avoid. They cite these docs but do not duplicate them. [`../SKILL.md`](../SKILL.md) is the entry point.
 
-Note that `../llms.txt` is a different file — it is the llms.txt-format index of *this* guidelines pack, not the official AdonisJS one.
+Note that the repository's top-level `llms.txt` is a different file — it is the llms.txt-format index of *this* guidelines pack, not the official AdonisJS one.
 
 ## Granularity
 
