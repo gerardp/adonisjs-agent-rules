@@ -65,6 +65,7 @@ Tests that leave state behind produce failures that depend on execution order â€
 ```dotenv title=".env.test"
 DB_DATABASE=my_app_test
 SESSION_DRIVER=memory
+LIMITER_STORE=memory
 REDIS_DB=1
 ```
 
@@ -73,6 +74,8 @@ Non-negotiable: a suite that truncates tables will eventually be run against the
 ```ts
 group.each.teardown(async () => redis.flushdb())
 ```
+
+Clear the limiter's memory store between rate-limit tests with `limiter.clear(['memory'])`; otherwise counters leak between cases. Never call an unrestricted `limiter.clear()` against a Redis database shared with application data, because it flushes the entire database. Give the limiter a dedicated Redis database if tests exercise that store.
 
 ## Use Factories, Not Hand-Built Fixtures
 

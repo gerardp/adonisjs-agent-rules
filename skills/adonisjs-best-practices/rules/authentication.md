@@ -183,7 +183,7 @@ Always ship a revocation path — `User.accessTokens.delete(user, tokenId)`, wit
 
 ## Rate-Limit Authentication Endpoints
 
-Login, registration, password reset, and token creation are brute-force targets. Use `@adonisjs/limiter`, keyed by IP *and* by identifier so one attacker cannot lock out a legitimate user.
+Login, registration, password reset, and token creation are brute-force targets. For credential verification, use the direct `@adonisjs/limiter` API with `penalize()` so successful logins do not consume attempts. Layer keys deliberately rather than relying on one IP-plus-identifier bucket; see [`security.md`](security.md).
 
 ## Keep Responses Uniform on Failure
 

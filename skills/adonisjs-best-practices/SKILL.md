@@ -1,6 +1,6 @@
 ---
 name: adonisjs-best-practices
-description: "Apply this skill whenever writing, reviewing, or refactoring AdonisJS v7 TypeScript code. This includes creating or modifying controllers, Lucid models, migrations, VineJS validators, policies and abilities, middleware, transformers, jobs, Ace commands, and service classes. Triggers for N+1 and query performance issues, eager loading, transactions, authentication and authorization patterns, validation, exception handling, queue and job configuration, route definitions, dependency injection, and architectural decisions. Also use for AdonisJS code reviews and for refactoring existing AdonisJS code to follow best practices."
+description: "Apply this skill whenever writing, reviewing, or refactoring AdonisJS v7 TypeScript code. This includes creating or modifying controllers, Lucid models, migrations, VineJS validators, policies and abilities, middleware, transformers, jobs, Ace commands, and service classes. Triggers for N+1 and query performance issues, eager loading, transactions, authentication and authorization patterns, rate limiting and throttling, validation, exception handling, queue and job configuration, route definitions, dependency injection, security, and architectural decisions. Also use for AdonisJS code reviews and for refactoring existing AdonisJS code to follow best practices."
 license: MIT
 ---
 

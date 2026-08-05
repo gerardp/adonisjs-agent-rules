@@ -86,7 +86,15 @@ Include the token in every form:
 
 ## Rate-Limit Authentication and Expensive Endpoints
 
-Use `@adonisjs/limiter` on login, registration, password reset, token creation, search, and export. Key on IP *and* identifier so an attacker cannot lock out a real user by hammering their email.
+Use the official `@adonisjs/limiter` package on login, registration, password reset, token creation, search, export, and other expensive endpoints. If the package is missing and adding it is approved, configure it with `node ace add @adonisjs/limiter`; do not hand-roll a counter middleware.
+
+Apply reusable HTTP throttles to routes or groups with `.use()`. Key authenticated traffic by user ID only after `auth`, `silent_auth`, or a manual auth check has populated `ctx.auth.user`; the initialize-auth middleware creates `ctx.auth` but does not authenticate. Fall back to IP for guests, and preserve middleware order so authentication runs before a user-keyed limiter.
+
+For credential checks, prefer a direct limiter created with `limiter.use()` and wrap `User.verifyCredentials()` with `penalize()`. This consumes quota only when verification fails; a route throttle consumes successful logins too. Normalize the identifier before building the key.
+
+An IP-plus-identifier key prevents one source from globally locking an account, but alone does not stop password spraying across many identifiers or distributed guessing across many IPs. Add a broader per-IP limit or a carefully tuned per-identifier limit when the threat model warrants it, while keeping failure responses uniform.
+
+Use the memory store for tests or a single process only. Use the database store when moderate traffic and an existing shared SQL database make it sufficient; prefer Redis when limiter throughput or latency justifies dedicated infrastructure. Both database and Redis stores can share limits across application instances.
 
 ## Validate Uploads by Content, Not Filename
 
