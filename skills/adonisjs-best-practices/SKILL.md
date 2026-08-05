@@ -1,6 +1,6 @@
 ---
 name: adonisjs-best-practices
-description: "Apply this skill whenever writing, reviewing, or refactoring AdonisJS v7 TypeScript code. This includes creating or modifying controllers, Lucid models, migrations, VineJS validators, policies and abilities, middleware, transformers, jobs, Ace commands, and service classes. Triggers for N+1 and query performance issues, eager loading, transactions, authentication and authorization patterns, rate limiting and throttling, validation, exception handling, queue and job configuration, route definitions, dependency injection, security, and architectural decisions. Also use for AdonisJS code reviews and for refactoring existing AdonisJS code to follow best practices."
+description: "Apply this skill whenever writing, reviewing, or refactoring AdonisJS v7 code. This includes controllers, Lucid models, migrations, VineJS validators, policies and abilities, middleware, transformers, jobs, Ace commands, service classes, and Edge templates, layouts, components, forms, and view rendering. Triggers for N+1 and query performance issues, eager loading, transactions, authentication and authorization patterns, validation, exception handling, queue and job configuration, route definitions, dependency injection, security, and architectural decisions. Also use for AdonisJS code reviews and refactoring."
 license: MIT
 ---
 
@@ -42,6 +42,7 @@ Cross-cutting changes often need more than one rule file.
 | Layer boundaries, when to extract a service, when not to abstract | [`rules/architecture.md`](rules/architecture.md) |
 | Routes, params, matchers, resource routes, URL generation | [`rules/routing.md`](rules/routing.md) |
 | Controllers, actions, HttpContext, response shaping | [`rules/controllers.md`](rules/controllers.md) |
+| Edge templates, view state, layouts, components, forms, helpers | [`rules/edge.md`](rules/edge.md) |
 | Middleware stacks, named middleware, request pipeline | [`rules/middleware.md`](rules/middleware.md) |
 | VineJS schemas, request validation, custom messages | [`rules/validation.md`](rules/validation.md) |
 | Lucid models, schema classes, relationships, hooks, serialization | [`rules/lucid-models.md`](rules/lucid-models.md) |

@@ -32,7 +32,7 @@ So the gap is not reference material — an agent can already look up any API. T
 └── skills/
     └── adonisjs-best-practices/
         ├── SKILL.md       ← index, application procedure, decision rules
-        ├── rules/         ← 20 topic files
+        ├── rules/         ← 21 topic files
         └── references/    ← vendored snapshot of the official AdonisJS docs
             ├── llms.txt      ·   146 lines — upstream table of contents
             └── llms-full.txt ·   47,876 lines (~1.5 MB) — the whole documentation
@@ -48,6 +48,7 @@ Everything the skill needs at runtime lives inside `skills/adonisjs-best-practic
 | `architecture.md` | Which layer owns which logic; when to extract a service |
 | `routing.md` | Resource routes, param matchers, named routes, `urlFor` |
 | `controllers.md` | Thin actions, RESTful naming, authorize→validate→write |
+| `edge.md` | View state, layouts, components, escaping, forms, helpers, and testing |
 | `middleware.md` | The three stacks, named middleware, typed options |
 | `validation.md` | VineJS schemas, `validateUsing`, metadata, messages |
 | `lucid-models.md` | Generated schema classes, relationships, hooks, factories |

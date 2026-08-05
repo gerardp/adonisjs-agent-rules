@@ -14,6 +14,7 @@ Read `skills/adonisjs-best-practices/SKILL.md` first — it is the index and exp
 
 - [routing.md](skills/adonisjs-best-practices/rules/routing.md): Route definitions, resource routes, param matchers and casting, named routes and type-safe URL generation.
 - [controllers.md](skills/adonisjs-best-practices/rules/controllers.md): Thin actions, RESTful naming, ordering of authorize/validate/write, response semantics.
+- [edge.md](skills/adonisjs-best-practices/rules/edge.md): Edge view state, layouts, components, escaping, forms, helpers, and rendered-page testing.
 - [middleware.md](skills/adonisjs-best-practices/rules/middleware.md): The three stacks and how to choose, named middleware with typed options, the request pipeline.
 - [validation.md](skills/adonisjs-best-practices/rules/validation.md): VineJS schemas, `request.validateUsing()`, validating params/headers/cookies, metadata, custom messages.
 - [error-handling.md](skills/adonisjs-best-practices/rules/error-handling.md): The global exception handler, `handle` vs `report`, custom exceptions, what never to leak.

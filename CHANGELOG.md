@@ -8,6 +8,13 @@ All notable changes to this pack are documented here. The format follows
 - **Minor** — a rule file is added, or existing guidance is meaningfully extended.
 - **Patch** — corrections, clarifications, and vendored-snapshot refreshes.
 
+## [Unreleased]
+
+### Added
+
+- `rules/edge.md` — opinionated guidance for view state, layouts, components, escaping,
+  server-rendered forms, helpers, and rendered-page testing.
+
 ## [1.0.0] - 2026-08-05
 
 First public release. Targets AdonisJS v7: `@adonisjs/core` 7.x · `@adonisjs/lucid` 22.x ·
