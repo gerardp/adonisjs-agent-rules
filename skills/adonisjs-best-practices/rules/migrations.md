@@ -120,13 +120,28 @@ Do it in three deploys for large tables:
 
 ## Declare Foreign Keys and Their Delete Behavior
 
+For single-column foreign keys, prefer the qualified shorthand
+`.references('table.column')`. It is equivalent to
+`.references('column').inTable('table')`:
+
 ```ts
 table
   .integer('user_id')
   .unsigned()
-  .references('id')
-  .inTable('users')
+  .references('users.id')
   .onDelete('CASCADE')
+```
+
+The foreign-key column must match the referenced key's database type and
+signedness. Pair `increments('id')` with `integer(...).unsigned()` and
+`bigIncrements('id')` with `bigInteger(...).unsigned()`:
+
+```ts
+// users.id uses table.increments('id')
+table.integer('user_id').unsigned().references('users.id')
+
+// accounts.id uses table.bigIncrements('id')
+table.bigInteger('account_id').unsigned().references('accounts.id')
 ```
 
 Choose `onDelete` deliberately: `CASCADE` removes children, `SET NULL` orphans them, `RESTRICT` blocks the parent delete. The default varies by database — be explicit.
