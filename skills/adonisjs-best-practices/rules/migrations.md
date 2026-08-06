@@ -43,7 +43,7 @@ export default class extends BaseSchema {
       table.increments('id')
       table.string('title').notNullable()
       table.text('content').notNullable()
-      table.string('status').defaultTo('draft')
+      table.string('status').notNullable().defaultTo('draft')
       table.timestamp('created_at')
       table.timestamp('updated_at')
     })
@@ -161,7 +161,10 @@ table.bigInteger('account_id').unsigned().references('accounts.id')
 
 Choose `onDelete` deliberately: `CASCADE` removes children, `SET NULL` orphans them, `RESTRICT` blocks the parent delete. The default varies by database — be explicit.
 
-Index foreign keys. Most engines do not do it for you, and unindexed FKs make joins and cascade deletes slow.
+Do not add a duplicate index blindly. MySQL/InnoDB automatically creates a
+suitable index on the referencing columns when none exists. PostgreSQL does
+not, so add one there when the relationship's joins, parent updates, or parent
+deletes warrant it.
 
 ## Index Alongside the Columns You Add
 
@@ -172,9 +175,15 @@ table.unique(['team_id', 'slug'])
 
 Composite index column order matters — it serves queries that filter on a prefix of the columns. On large production tables, build indexes concurrently (PostgreSQL: `CREATE INDEX CONCURRENTLY`, which requires `static disableTransactions = true`).
 
-## Migrations Run in a Transaction by Default
+## Understand Transaction Limits
 
-A failing migration rolls back cleanly. Opt out only when a statement cannot run inside a transaction (concurrent index builds, some `ALTER TYPE` forms):
+Lucid wraps each migration file in a transaction by default. That only provides
+an atomic rollback for statements the database can transact. MySQL implicitly
+commits many DDL statements, including `CREATE TABLE`, `ALTER TABLE`, and
+`CREATE INDEX`, so a failed schema migration can leave earlier changes applied.
+
+Opt out when a statement cannot run inside a transaction, such as PostgreSQL's
+`CREATE INDEX CONCURRENTLY`:
 
 ```ts
 export default class extends BaseSchema {
@@ -182,7 +191,9 @@ export default class extends BaseSchema {
 }
 ```
 
-With transactions disabled, a mid-migration failure leaves partial changes. Keep such migrations to a single statement.
+With transactions disabled, a mid-migration failure can also leave partial
+changes. Keep these migrations focused. After any MySQL DDL failure, inspect the
+actual schema before retrying or repairing the migration.
 
 ## Choose Column Types Deliberately
 

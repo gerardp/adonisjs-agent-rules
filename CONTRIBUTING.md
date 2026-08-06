@@ -26,7 +26,7 @@ Every code sample must be checked against the official v7 documentation before i
 
 ```bash
 # Search the vendored snapshot
-grep -n "withAuthFinder" skills/adonisjs-best-practices/references/llms-full.txt
+rg -n "withAuthFinder" skills/adonisjs-best-practices/references/llms-full.txt
 
 # Or fetch a live page as Markdown — authoritative, and never stale
 curl -sSL https://docs.adonisjs.com/guides/basics/validation.md

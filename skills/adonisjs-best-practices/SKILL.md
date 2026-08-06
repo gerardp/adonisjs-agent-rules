@@ -79,10 +79,10 @@ These rules capture judgment and defaults; they are not an API reference. When y
 
 A snapshot of the last two is vendored inside this skill, which is faster than a network fetch when you want to search the whole corpus at once:
 
-Shell commands run from the project root, not from this directory, so grep the installed path:
+Shell commands run from the project root, not from this directory, so search the installed path:
 
 ```bash
-grep -n "withAuthFinder" .claude/skills/adonisjs-best-practices/references/llms-full.txt
+rg -n "withAuthFinder" .claude/skills/adonisjs-best-practices/references/llms-full.txt
 ```
 
 It is a point-in-time copy, so prefer the live URLs for anything version-sensitive. See [`references/README.md`](references/README.md).

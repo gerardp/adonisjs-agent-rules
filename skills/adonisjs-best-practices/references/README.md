@@ -15,10 +15,10 @@ Upstream source: [`adonisjs/v7-docs`](https://github.com/adonisjs/v7-docs).
 
 These files are a point-in-time copy and **will go stale**. Prefer the live URLs when you can reach the network — AdonisJS moved fast through the v7 cycle, and a stale local copy that looks authoritative is worse than no copy at all.
 
-Use the vendored files when working offline, when you want a stable reference that doesn't shift mid-task, or when you need to grep the whole corpus at once:
+Use the vendored files when working offline, when you want a stable reference that doesn't shift mid-task, or when you need to search the whole corpus at once:
 
 ```bash
-grep -n "withAuthFinder" .claude/skills/adonisjs-best-practices/references/llms-full.txt
+rg -n "withAuthFinder" .claude/skills/adonisjs-best-practices/references/llms-full.txt
 ```
 
 Refresh them from the repository root with:

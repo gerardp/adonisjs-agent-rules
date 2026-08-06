@@ -18,7 +18,9 @@ A test that goes through the real HTTP stack exercises routes, middleware, valid
 
 ```ts title="tests/functional/posts/store.spec.ts"
 import { test } from '@japa/runner'
-import User from '#models/user'
+import testUtils from '@adonisjs/core/services/test_utils'
+import Post from '#models/post'
+import { UserFactory } from '#database/factories/user_factory'
 
 test.group('Posts store', (group) => {
   group.each.setup(() => testUtils.db().withGlobalTransaction())
@@ -32,7 +34,8 @@ test.group('Posts store', (group) => {
       .json({ title: 'Hello', body: 'World' })
 
     response.assertStatus(201)
-    assert.equal(await Post.query().count('* as total').firstOrFail(), 1)
+    const post = await Post.findByOrFail('title', 'Hello')
+    assert.equal(post.userId, user.id)
   })
 })
 ```
@@ -106,7 +109,7 @@ Every endpoint deserves at least: the happy path, a validation failure, an unaut
 
 ```ts
 test('rejects anonymous requests', async ({ client }) => {
-  const response = await client.visit('posts.store').json({ title: 'x' })
+  const response = await client.visit('posts.store').unsafeJson({ title: 'x' })
   response.assertStatus(401)
 })
 
@@ -114,10 +117,17 @@ test('rejects users who do not own the post', async ({ client }) => {
   const [owner, other] = await UserFactory.createMany(2)
   const post = await PostFactory.merge({ userId: owner.id }).create()
 
-  const response = await client.visit('posts.update', { id: post.id }).loginAs(other).json({})
+  const response = await client
+    .visit('posts.update', { id: post.id })
+    .loginAs(other)
+    .unsafeJson({})
   response.assertStatus(403)
 })
 ```
+
+Use `unsafeJson`, `unsafeForm`, or `unsafeQs` only when malformed or incomplete
+input is intentional; they bypass the route registry's TypeScript checks while
+still sending the request normally.
 
 ## Use Built-in Fakes for External Effects
 

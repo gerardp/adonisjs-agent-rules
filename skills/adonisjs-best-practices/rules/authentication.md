@@ -29,8 +29,8 @@ if (!(await hash.verify(user.password, password))) {
 
 Correct:
 ```ts title="app/models/user.ts"
+import { UsersSchema } from '#database/schema'
 import { compose } from '@adonisjs/core/helpers'
-import { BaseModel } from '@adonisjs/lucid/orm'
 import hash from '@adonisjs/core/services/hash'
 import { withAuthFinder } from '@adonisjs/auth/mixins/lucid'
 
@@ -39,9 +39,7 @@ const AuthFinder = withAuthFinder(() => hash.use('scrypt'), {
   passwordColumnName: 'password',
 })
 
-export default class User extends compose(BaseModel, AuthFinder) {
-  // ...
-}
+export default class User extends compose(UsersSchema, AuthFinder) {}
 ```
 
 ```ts title="app/controllers/session_controller.ts"
@@ -57,13 +55,8 @@ async store({ request, auth, response }: HttpContext) {
 
 `verifyCredentials` always performs a hash comparison, so timing is constant whether or not the email exists. Add every valid login identifier to `uids` (`['email', 'username']`).
 
-Note the official auth guide shows `compose(BaseModel, AuthFinder)` with hand-declared columns. On Lucid 22 compose from the generated schema class instead:
-
-```ts
-import { UsersSchema } from '#database/schema'
-
-export default class User extends compose(UsersSchema, AuthFinder) {}
-```
+Some official auth examples still show `compose(BaseModel, AuthFinder)` with
+hand-declared columns. On Lucid 22, compose from the generated schema class.
 
 ## The Mixin Hashes Passwords — Don't Hash Twice
 
@@ -145,9 +138,10 @@ Session apps also need `@adonisjs/shield` for CSRF. See [`security.md`](security
 Register the provider on the model:
 
 ```ts title="app/models/user.ts"
+import { UsersSchema } from '#database/schema'
 import { DbAccessTokensProvider } from '@adonisjs/auth/access_tokens'
 
-export default class User extends BaseModel {
+export default class User extends UsersSchema {
   static accessTokens = DbAccessTokensProvider.forModel(User, {
     expiresIn: '30 days',
     prefix: 'oat_',
