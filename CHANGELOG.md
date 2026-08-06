@@ -15,6 +15,16 @@ All notable changes to this pack are documented here. The format follows
 - `rules/edge.md` — opinionated guidance for view state, layouts, components, escaping,
   server-rendered forms, helpers, and rendered-page testing.
 
+### Changed
+
+- `rules/lucid-models.md` extended after a pass over the Lucid 22 documentation: model
+  statics (`table`, `primaryKey`, `connection`, `selfAssignPrimaryKey` for UUID keys),
+  row-level behavior on the model and why `@computed()` is not the default, explicit
+  relationship key overrides, reading pivot data from `$extras.pivot_*`, the `scope()`
+  helper and why a static method cannot be reused inside a preload, the quiet
+  hook-skipping variants, and the `findMany` ordering, `merge`/`fill`, and
+  `allowExtraProperties` traps.
+
 ## [1.0.0] - 2026-08-05
 
 First public release. Targets AdonisJS v7: `@adonisjs/core` 7.x · `@adonisjs/lucid` 22.x ·

@@ -53,6 +53,36 @@ export default class User extends UsersSchema {
 }
 ```
 
+## Declare Non-Default Tables, Keys, and Connections as Statics
+
+The generator infers `users` from `User`, `id` as the primary key, and the default connection. When one of those is wrong, say so on the model — never by editing the schema class.
+
+```ts title="app/models/user.ts"
+export default class User extends UsersSchema {
+  static table = 'app_users'
+  static primaryKey = 'user_id'
+  static connection = 'analytics'
+}
+```
+
+`static connection` is sticky: every query, relationship, and transaction started from the model uses it. For per-request routing (multi-tenancy), bind a single instance with `user.useConnection(tenant)` instead — it does not change later `User.query()` calls.
+
+UUID and ULID keys need `selfAssignPrimaryKey`. Without it Lucid waits for a database-generated id that never arrives:
+
+```ts title="app/models/post.ts"
+import { beforeCreate } from '@adonisjs/lucid/orm'
+import { randomUUID } from 'node:crypto'
+
+export default class Post extends PostsSchema {
+  static selfAssignPrimaryKey = true
+
+  @beforeCreate()
+  static assignId(post: Post) {
+    post.id = post.id ?? randomUUID()
+  }
+}
+```
+
 ## Treat JSON Conversion as Driver-Specific
 
 `table.json()` and `table.jsonb()` define database storage; they do not promise
@@ -118,19 +148,61 @@ export default class Post extends PostsSchema {
 
 Model classes are imported as **values** (the lazy `() => Post` avoids circular-import problems); relation *types* are imported with `import type`.
 
+Keys are inferred from the model names — `Post.userId` points at `users.id`. When a column doesn't follow the convention, name it on the decorator rather than reshaping the schema around the default:
+
+```ts
+@belongsTo(() => User, { foreignKey: 'authorId' })
+declare author: BelongsTo<typeof User>
+```
+
 Many-to-many with pivot data:
 
 ```ts
 @manyToMany(() => Team, {
   pivotColumns: ['role', 'joined_at'],
+  pivotTimestamps: true,
 })
 declare teams: ManyToMany<typeof Team>
 ```
 
+Declared pivot columns land on the **related instance** under an `$extras.pivot_` prefix. They are not properties of `Team`, and TypeScript won't catch a typo there:
+
+```ts
+await user.load('teams')
+user.teams.forEach((team) => console.log(team.name, team.$extras.pivot_role))
+```
+
 ```ts
 await user.related('teams').attach({ 1: { role: 'admin' } })
-await user.related('teams').sync([1, 2, 3])   // detaches everything else
+await user.related('teams').sync([1, 2, 3])                       // detaches everything else
+await user.related('teams').sync({ 1: { role: 'admin' } }, false) // attach/update only
 ```
+
+`attach` does not deduplicate — passing an id that is already linked is a database error, not a no-op. Reach for `sync` when you know the target state, `attach` only when you know the row is absent.
+
+## Put Row-Level Behavior on the Model
+
+Lucid is Active Record: a model owns its data *and* that data's immediate behavior. Derived values are plain TypeScript getters — no decorator, no column:
+
+```ts title="app/models/subscription.ts"
+import { DateTime } from 'luxon'
+
+export default class Subscription extends SubscriptionsSchema {
+  get isActive() {
+    return this.status === 'active' && this.expiresAt > DateTime.now()
+  }
+
+  async cancel(reason: string) {
+    this.status = 'cancelled'
+    this.cancellationReason = reason
+    await this.save()
+  }
+}
+```
+
+Lucid still ships a `@computed()` decorator, but its only job is injecting a getter into `serialize()` output. Response shape belongs in a transformer, so prefer the undecorated getter.
+
+The dividing line is orchestration. A method that touches one row and its relationships belongs on the model; one that charges a card, sends mail, or coordinates several aggregates belongs in a service — see [`architecture.md`](architecture.md).
 
 ## Keep Hooks Idempotent and Cheap
 
@@ -161,6 +233,8 @@ await Post.query().where('id', 1).update({ title: 'New' })
 
 When hooks must run, fetch the instance, mutate, and `save()`.
 
+To skip hooks *deliberately* on a single row — seeding, back-filling, a one-off fixup — use the quiet variants rather than dropping to the query builder: `createQuietly`, `createManyQuietly`, `saveQuietly`, `deleteQuietly`. Timestamps and dirty-tracking still apply; only the hooks are suppressed.
+
 Keep side effects out of hooks. Sending mail from `@afterCreate` means every test and seeder sends mail; dispatch from the service that owns the use case instead.
 
 ## Prefer Explicit Query Scopes Over Global Filtering
@@ -182,7 +256,27 @@ await Post.published().orderBy('published_at', 'desc')
 await Post.query()                      // admin sees everything, explicitly
 ```
 
-Lucid also ships a `scope()` helper for composable named scopes — see the [Lucid model scopes docs](https://lucid.adonisjs.com/docs/model-query-scopes).
+A static method can't be reused inside a preload callback, though — that callback receives a query builder, not the model. When the same filter is needed in both places, define it once with the `scope()` helper:
+
+```ts title="app/models/post.ts"
+import { scope } from '@adonisjs/lucid/orm'
+
+export default class Post extends PostsSchema {
+  static published = scope((query) => {
+    query.where('status', 'published')
+  })
+}
+```
+
+```ts
+await Post.query().withScopes((scopes) => scopes.published())
+
+await User.query().preload('posts', (posts) => {
+  posts.withScopes((scopes) => scopes.published())   // same filter, one definition
+})
+```
+
+Scopes accept arguments (`scope((query, user: User) => …)`), and `apply()` is an alias for `withScopes()`. Either way the caller opts in — that is the property worth protecting.
 
 ## Use the Right CRUD Method
 
@@ -193,11 +287,19 @@ await Post.findOrFail(id)                          // throws → 404 automatical
 await Post.findByOrFail('slug', slug)
 await Post.firstOrCreate({ email }, { name })      // idempotent
 await Post.updateOrCreate({ externalId }, payload) // upsert — use for imports/webhooks
+await Post.updateOrCreateMany('externalId', rows)  // batched upsert, one transaction
 await post.merge(payload).save()
+await post.refresh()                               // re-read database defaults/triggers
 await post.delete()
 ```
 
 `findOrFail` over `find` + manual null check: the exception already maps to a 404.
+
+Three sharp edges:
+
+- **`findMany` doesn't preserve the order of the ids you pass.** Rows come back ordered by primary key. Re-order in JS when order carries meaning.
+- **`merge` and `fill` throw on keys that aren't columns.** That's a feature — it catches a renamed column at the boundary. Don't pass `allowExtraProperties: true` to quiet it; hand it a payload that only contains columns.
+- **`fill` replaces every attribute**, resetting anything you don't pass. `merge` only touches the keys you supply. Reach for `merge` unless you genuinely want the reset.
 
 ## Don't Hardcode Table Names
 

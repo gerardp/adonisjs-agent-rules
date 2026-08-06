@@ -51,7 +51,7 @@ Everything the skill needs at runtime lives inside `skills/adonisjs-best-practic
 | `edge.md` | View state, layouts, components, escaping, forms, helpers, and testing |
 | `middleware.md` | The three stacks, named middleware, typed options |
 | `validation.md` | VineJS schemas, `validateUsing`, metadata, messages |
-| `lucid-models.md` | Generated schema classes, relationships, hooks, factories |
+| `lucid-models.md` | Generated schema classes, model statics, relationships, hooks, scopes, factories |
 | `db-performance.md` | N+1 and preloading, pagination, aggregates, indexes |
 | `migrations.md` | Reversibility, no model imports, backfills, foreign keys |
 | `transactions.md` | Managed transactions, threading `trx`, isolation levels |
