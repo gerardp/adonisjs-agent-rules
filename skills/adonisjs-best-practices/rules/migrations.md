@@ -75,9 +75,9 @@ async down() {
 
 Rolling back a dropped column cannot restore its data. When a migration is destructive, say so in a comment and make sure a backup or backfill exists.
 
-## Omit Redundant Nullability Modifiers
+## Omit Redundant Nullability Modifiers Carefully
 
-New columns are nullable by default. Omit `.nullable()` and use
+New columns are normally nullable by default. Omit `.nullable()` and use
 `.notNullable()` only when `NULL` is invalid:
 
 ```ts
@@ -89,6 +89,14 @@ table.boolean('active').notNullable().defaultTo(true)
 `defaultTo()` does not imply `NOT NULL`; a caller can still insert `NULL`
 explicitly. When changing an existing column's constraint, use `setNullable`
 or `dropNullable` so the alteration is explicit.
+
+MySQL has a legacy exception for `TIMESTAMP`. When
+`explicit_defaults_for_timestamp` is `OFF`, a `TIMESTAMP` without an explicit
+`NULL` attribute becomes `NOT NULL`; the first one may also receive implicit
+`DEFAULT CURRENT_TIMESTAMP` and `ON UPDATE CURRENT_TIMESTAMP` attributes. The
+variable defaults to `ON` in MySQL 8, but can still be disabled. Before removing
+`.nullable()` from optional timestamps, verify every target server; otherwise,
+keep the modifier for those columns.
 
 ## Treat Applied Migrations as Immutable
 
