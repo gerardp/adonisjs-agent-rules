@@ -53,6 +53,42 @@ export default class User extends UsersSchema {
 }
 ```
 
+## Treat JSON Conversion as Driver-Specific
+
+`table.json()` and `table.jsonb()` define database storage; they do not promise
+that every driver will bind JavaScript objects or return the same runtime shape.
+Generated JSON columns are typed as `any`, so narrow the type in the model and
+add `prepare` or `consume` only when the configured driver needs them:
+
+```ts title="app/models/user.ts"
+import { UsersSchema } from '#database/schema'
+import { column } from '@adonisjs/lucid/orm'
+
+type Settings = {
+  theme: 'light' | 'dark'
+  notifications: boolean
+}
+
+export default class User extends UsersSchema {
+  @column({
+    prepare: (value: Settings | string | null) =>
+      value === null || typeof value === 'string' ? value : JSON.stringify(value),
+    consume: (value: Settings | string | null) =>
+      typeof value === 'string' ? (JSON.parse(value) as Settings) : value,
+  })
+  declare settings: Settings | null
+}
+```
+
+Do not add these transforms reflexively. For example, `mysql2` returns JSON as
+JavaScript values unless `jsonStrings` is enabled. Verify the application's
+driver and connection options first.
+
+`prepare` runs when Lucid saves a model instance. Bulk writes through
+`Model.query().update()` and direct writes through `db.from(...).update()` do
+not run model column transforms; pass the driver-ready value yourself, or load
+the model and use `merge(...).save()` when the transform must apply.
+
 ## Declare Relationships With Their Types
 
 The `declare` keyword and the relation type are both required for type inference.

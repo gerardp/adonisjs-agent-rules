@@ -75,6 +75,21 @@ async down() {
 
 Rolling back a dropped column cannot restore its data. When a migration is destructive, say so in a comment and make sure a backup or backfill exists.
 
+## Omit Redundant Nullability Modifiers
+
+New columns are nullable by default. Omit `.nullable()` and use
+`.notNullable()` only when `NULL` is invalid:
+
+```ts
+table.timestamp('created_at')
+table.timestamp('updated_at')
+table.boolean('active').notNullable().defaultTo(true)
+```
+
+`defaultTo()` does not imply `NOT NULL`; a caller can still insert `NULL`
+explicitly. When changing an existing column's constraint, use `setNullable`
+or `dropNullable` so the alteration is explicit.
+
 ## Treat Applied Migrations as Immutable
 
 Once a migration has run anywhere but your own machine, editing it is a broken deploy waiting to happen — your database has the old shape recorded as "done" and will never re-run it. Write a new migration instead.
@@ -97,7 +112,7 @@ Correct — use the query builder with literal table names:
 ```ts
 async up() {
   this.schema.alterTable('users', (table) => {
-    table.string('slug').nullable()
+    table.string('slug')
   })
 
   this.defer(async (db) => {
@@ -174,6 +189,7 @@ With transactions disabled, a mid-migration failure leaves partial changes. Keep
 - Money: integer minor units or `decimal`, never `float`.
 - Timestamps: `timestamp` with timezone; let `autoCreate` / `autoUpdate` manage `created_at` / `updated_at`.
 - Enums: a `string` plus a check constraint, or a `tsType` union in `database/schema_rules.ts`, is easier to evolve than a native enum.
+- JSON: `table.json()` / `table.jsonb()` define storage only; driver-specific model transforms belong in a model override. See [`lucid-models.md`](lucid-models.md).
 - Text: prefer `text` over guessing a `varchar` length you will regret.
 
 ## Seeders Are for Reference Data
